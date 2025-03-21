@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, AfterLoad, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, AfterLoad, JoinColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { User } from './user.entity';
 import { WalletDetails } from './wallet-details.entity';
 import { WalletUser } from './wallet-user.entity';
@@ -45,13 +45,13 @@ export class Wallet {
   @OneToMany(() => WalletUser, walletUser => walletUser.wallet)
   walletUserCreated!: WalletUser[];
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
+  
+  @UpdateDateColumn({ name: 'updated_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt!: Date;
 
-  @Column({ name: 'deleted_at', type: 'timestamp', nullable: true })
+  @Column({ name: 'deleted_at', type: 'datetime', nullable: true })
   deletedAt?: Date;
 
   @AfterLoad()
@@ -65,5 +65,16 @@ export class Wallet {
     if (!this.properties.decimalPlaces) {
       this.properties.decimalPlaces = 0;
     }
+  }
+
+  @BeforeInsert()
+  setCreatedAt() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  setUpdatedAt() {
+    this.updatedAt = new Date();
   }
 }

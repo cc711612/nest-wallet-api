@@ -17,7 +17,15 @@ export class WalletService {
   ) {}
 
   create(walletData: Partial<Wallet>) {
-    const newWallet = this.walletRepository.create(walletData);
+    const { properties = {}, ...rest } = walletData;
+    const { unitConfigurable = false, decimalPlaces = 0 } = properties;
+    const newWallet = this.walletRepository.create({
+      ...rest,
+      properties: {
+        unitConfigurable,
+        decimalPlaces,
+      },
+    });
     return this.walletRepository.save(newWallet);
   }
 
