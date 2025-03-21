@@ -1,20 +1,31 @@
 import { Expose, Transform } from 'class-transformer';
+import { IsString, IsNotEmpty, IsNumber, IsOptional, IsEnum } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDto {
+  @ApiProperty({ description: 'The ID of the user' })
+  @IsNumber()
+  @IsNotEmpty()
   @Expose()
   id!: number;
 
+  @ApiProperty({ description: 'The username of the user' })
+  @IsString()
+  @IsNotEmpty()
   @Expose()
   name!: string;
 
+  @ApiProperty({ description: 'The member token of the user' })
   @Expose()
   @Transform(({ obj }) => obj.token)
   memberToken!: string;
 
+  @ApiProperty({ description: 'The JWT of the user' })
   @Expose()
   @Transform(({ obj }) => obj.jwt)
   jwt!: string;
 
+  @ApiProperty({ description: 'The wallet of the user', required: false })
   @Expose()
   @Transform(({ obj }) => obj.wallet ? { id: obj.wallet.id, code: obj.wallet.code } : null)
   wallet!: {
@@ -22,6 +33,7 @@ export class UserDto {
     code: string;
   };
 
+  @ApiProperty({ description: 'The wallet users of the user' })
   @Expose()
   @Transform(({ obj }) => obj.walletUsers.map((walletUser: any) => ({
     id: walletUser.id,
@@ -48,6 +60,7 @@ export class UserDto {
     deletedAt: string | null;
   }>;
 
+  @ApiProperty({ description: 'The devices of the user' })
   @Expose()
   @Transform(({ obj }) => obj.devices.map((device: any) => ({
     id: device.id,
@@ -75,6 +88,7 @@ export class UserDto {
     deletedAt: string | null;
   }>;
 
+  @ApiProperty({ description: 'The notifies of the user' })
   @Expose()
   notifies!: Array<{
     id: number;
@@ -87,9 +101,11 @@ export class UserDto {
     };
   }>;
 
+  @ApiProperty({ description: 'The creation date of the user' })
   @Expose()
   createdAt!: Date;
 
+  @ApiProperty({ description: 'The update date of the user' })
   @Expose()
   updatedAt!: Date;
 }

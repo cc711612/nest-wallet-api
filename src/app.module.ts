@@ -18,6 +18,7 @@ import { Device } from './entities/device.entity';
 import { WalletDetails } from './entities/wallet-details.entity';
 import * as dotenv from 'dotenv';
 import { configureMiddlewares } from './routes';
+import { JwtModule } from '@nestjs/jwt';
 dotenv.config();
 
 console.log('Database Host:', process.env.DB_HOST);
@@ -56,6 +57,10 @@ console.log('JWT Secret:', process.env.JWT_SECRET);
     UserModule,
     WalletModule,
     WalletDetailModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'defaultSecret',
+      signOptions: { expiresIn: '1y' },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

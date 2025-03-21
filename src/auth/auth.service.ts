@@ -17,6 +17,9 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
+    if (!loginDto) {
+      throw new UnauthorizedException('登入資料未提供');
+    }
     const { account, password } = loginDto;
     const user = await this.userService.findByAccount(account);
     if (!user) {
@@ -25,31 +28,24 @@ export class AuthService {
     if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('密碼有誤');
     }
-    const token = this.generateToken(user);
+    const token = await this.generateToken(user);
     const userWithWallet = await this.userService.findUserWithWallet(user.id);
     if (!userWithWallet) {
       throw new UnauthorizedException('用戶錢包不存在');
     }
-    userWithWallet.jwt = token;
+    userWithWallet.jwt = await token;
     userWithWallet.notifies = await this.walletUserService.getWalletUsers(user.id);
     return UserTransformer.transform(userWithWallet);
   }
 
   async thirdPartyLogin(loginDto: LoginDto) {
-    // Implement third-party login logic here
-    // For example, you might validate the third-party token and then find or create a user in your system
     const { account, password } = loginDto;
     const user = await this.userService.findByAccount(account);
     if (!user) {
       throw new UnauthorizedException('User does not exist');
     }
-    // Validate third-party token (this is just a placeholder, implement your own logic)
-    // const isValidToken = token === 'valid-token';
-    // if (!isValidToken) {
-    //   throw new UnauthorizedException('Invalid third-party token');
-    // }
-    const jwt = this.generateToken(user);
-    user.jwt = jwt;
+    const jwt = await this.generateToken(user);
+    user.jwt = await jwt;
     return UserTransformer.transform(user);
   }
 
@@ -66,7 +62,7 @@ export class AuthService {
     return { isBound };
   }
 
-  private generateToken(user: any) {
+  async generateToken(user: any) {
     const payload = {
       iss: process.env.APP_URL,
       aud: process.env.APP_URL,
@@ -84,6 +80,20 @@ export class AuthService {
     return this.jwtService.sign(payload, { secret: secretKey, algorithm: 'HS256' });
   }
 
+  async decodeToken(token: string) {
+    try {
+      const secretKey = this.configService.get<string>('JWT_SECRET');
+      return this.jwtService.verify(token, { secret: secretKey, algorithms: ['HS256'] });
+    } catch (error) {
+      throw new UnauthorizedException('無效的 Token');
+    }
+  }
+
+  async getUserByDecodetoken(token: string) {
+    const decoded = await this.decodeToken(token);
+    return this.userService.findOne(decoded.user.id);
+  }
+  
   async register(registerDto: RegisterDto) {
     try {
       const { account, name, password } = registerDto;

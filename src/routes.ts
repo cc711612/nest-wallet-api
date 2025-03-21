@@ -9,4 +9,11 @@ export function configureMiddlewares(consumer: MiddlewareConsumer) {
     .forRoutes(
       { path: '/*', method: RequestMethod.ALL },
     );
+  // for wallet controller
+  consumer
+    .apply(JwtAuthMiddleware)
+    .forRoutes(
+      { path: 'wallets', method: RequestMethod.ALL },
+      { path: 'wallets/*', method: RequestMethod.ALL },
+    );
 }
