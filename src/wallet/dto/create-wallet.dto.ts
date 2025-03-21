@@ -9,7 +9,7 @@ export class CreateWalletDto {
   @IsNotEmpty()
   readonly title: string = '';
 
-  @ApiProperty({ description: 'The ID of the user' })
+  @ApiProperty({ description: 'The ID of the user (extracted from the JWT token in the header)' })
   @IsNumber()
   @IsNotEmpty()
   @Transform(({ obj }) => obj.user?.id)

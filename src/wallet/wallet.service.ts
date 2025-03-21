@@ -31,7 +31,7 @@ export class WalletService {
 
   async findAll(query: FindAllWalletsDto, userId: number) {
     const currentPage = parseInt(query.page as any, 10) || 1;
-    const perPage = parseInt(query.limit as any, 10) || 10;
+    const perPage = parseInt(query.perPage as any, 10) || 10;
     const walletUsers = await this.walletUserRepository.find({
       where: { userId, isAdmin: false },
       select: ['walletId'],
