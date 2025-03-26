@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Wallet } from '../entities/wallet.entity';
-import { WalletUser } from '../entities/wallet-user.entity';
+import { Wallet } from './entities/wallet.entity';
+import { WalletUser } from './entities/wallet-user.entity';
 import { FindAllWalletsDto } from './dto/find-all-wallets.dto';
 import { last } from 'rxjs';
 import { paginate } from '../utils/pagination.util';

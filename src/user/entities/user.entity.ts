@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, BeforeInsert, BeforeUpdate, JoinColumn, getRepository } from 'typeorm';
-import { Wallet } from '../entities/wallet.entity';
-import { Device } from './device.entity';
-import { WalletUser } from './wallet-user.entity';
+import { Wallet } from '../../wallet/entities/wallet.entity';
+import { Device } from '../../device/entities/device.entity';
+import { WalletUser } from '../../wallet/entities/wallet-user.entity';
 import { Exclude } from 'class-transformer';
 // import * as bcrypt from 'bcrypt';
 

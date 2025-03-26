@@ -19,4 +19,4 @@ export class WalletDetailType {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
-} 
+}

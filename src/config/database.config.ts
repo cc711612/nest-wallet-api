@@ -1,11 +1,11 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
-import { Wallet } from '../entities/wallet.entity';
-import { Device } from '../entities/device.entity';
-import { Social } from '../entities/social.entity';
-import { WalletUser } from '../entities/wallet-user.entity';
-import { Category } from '../entities/category.entity';
-import { WalletDetails } from '../entities/wallet-details.entity';
+import { User } from '../user/entities/user.entity';
+import { Wallet } from '../wallet/entities/wallet.entity';
+import { Device } from '../device/entities/device.entity';
+import { Social } from '../social/entities/social.entity';
+import { WalletUser } from '../wallet/entities/wallet-user.entity';
+import { Category } from '../category/entities/category.entity';
+import { WalletDetails } from '../wallet/entities/wallet-details.entity';
 
 export const databaseConfig: TypeOrmModuleOptions = {
   type: 'mysql',
@@ -26,4 +26,4 @@ export const databaseConfig: TypeOrmModuleOptions = {
   synchronize: false,
   autoLoadEntities: true,
   logging: process.env.NODE_ENV !== 'production',
-}; 
+};
