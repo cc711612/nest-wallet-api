@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { Wallet } from './wallet.entity';
-import { WalletDetails } from './wallet-details.entity';
+import { Wallet } from '../../wallet/entities/wallet.entity';
+import { WalletDetails } from '../../wallet/entities/wallet-details.entity';
 
 @Entity('categories')
 export class Category {

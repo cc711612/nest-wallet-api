@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user.entity';
-import { WalletUser } from './wallet-user.entity';
+import { User } from '../../user/entities/user.entity';
+import { WalletUser } from '../../wallet/entities/wallet-user.entity';
 
 @Entity('devices')
 export class Device {

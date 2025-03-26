@@ -21,6 +21,7 @@ export class FindAllWalletsDto {
   readonly search?: string;
 
   @ApiProperty({ description: 'The status of the wallets to filter by', enum: [1, 0], required: false })
+  @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
   @IsEnum([1, 0])
   @IsOptional()
   readonly status?: 1 | 0;

@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { UserDto } from './dto/user.dto';
-import { User } from '../entities/user.entity';
+import { User } from '../user/entities/user.entity';
 
 export class UserTransformer {
   static transform(user: User): UserDto {

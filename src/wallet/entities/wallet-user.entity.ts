@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Wallet } from './wallet.entity';
 import { WalletDetailSplit } from './wallet-detail-split.entity';
-import { Device } from './device.entity';
+import { Device } from '../../device/entities/device.entity';
 import { WalletDetails } from './wallet-details.entity';
 
 @Entity('wallet_users')
