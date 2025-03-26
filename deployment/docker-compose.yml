@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: ${PROJECT_NAME}-node
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+    volumes:
+      - ..:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "${PORT}:3000"
+    working_dir: /usr/src/app
