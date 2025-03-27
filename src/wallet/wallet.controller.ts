@@ -32,4 +32,9 @@ export class WalletController {
   remove(@Param('id') id: string) {
     return this.walletService.remove(Number(id));
   }
+
+  @Get(':code/users')
+  findUsersByWalletCode(@Param('code') code: string) {
+    return this.walletService.findUsersByWalletCode(code);
+  }
 }

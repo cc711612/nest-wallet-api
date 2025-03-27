@@ -12,6 +12,9 @@ export function configureMiddlewares(consumer: MiddlewareConsumer) {
   // for wallet controller
   consumer
     .apply(JwtAuthMiddleware)
+    .exclude(
+      { path: 'wallets/:code/users', method: RequestMethod.GET },
+    )
     .forRoutes(
       { path: 'wallets', method: RequestMethod.ALL },
       { path: 'wallets/*', method: RequestMethod.ALL },

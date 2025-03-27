@@ -23,6 +23,7 @@ describe('WalletController', () => {
             findOne: jest.fn(), // Mock the findOne method
             update: jest.fn(), // Mock the update method
             remove: jest.fn(), // Mock the remove method
+            findUsersByWalletCode: jest.fn(), // Mock the findUsersByWalletCode method
           },
         },
       ],
@@ -98,6 +99,38 @@ describe('WalletController', () => {
       const id = '1';
       await controller.remove(id);
       expect(service.remove).toHaveBeenCalledWith(Number(id));
+    });
+  });
+
+  describe('findUsersByWalletCode', () => {
+    it('should call service.findUsersByWalletCode with correct parameters', async () => {
+      const code = 'test-code';
+      const result = {
+        wallet: {
+          users: [
+            {
+              id: 522,
+              name: 'Juni',
+              userId: 58,
+              isAdmin: true,
+              notifyEnable: true,
+            },
+            {
+              id: 523,
+              name: 'Roy',
+              userId: 1,
+              isAdmin: false,
+              notifyEnable: true,
+            },
+          ],
+        },
+      };
+
+      jest.spyOn(service, 'findUsersByWalletCode').mockResolvedValue(result);
+
+      const response = await controller.findUsersByWalletCode(code);
+      expect(service.findUsersByWalletCode).toHaveBeenCalledWith(code);
+      expect(response).toEqual(result);
     });
   });
 });
