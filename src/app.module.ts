@@ -10,12 +10,14 @@ import { LogModule } from './log/log.module';
 import { DeviceModule } from './device/device.module';
 import { UserModule } from './user/user.module'
 import { WalletDetailModule } from './wallet/wallet-detail.module';
+import { CategoryModule } from './category/category.module';
 import { WalletUser } from './wallet/entities/wallet-user.entity';
 import { User } from './user/entities/user.entity';
 import { Wallet } from './wallet/entities/wallet.entity';
 import { WalletDetailSplit } from './wallet/entities/wallet-detail-split.entity';
 import { Device } from './device/entities/device.entity';
 import { WalletDetails } from './wallet/entities/wallet-details.entity';
+import { Category } from './category/entities/category.entity';
 import * as dotenv from 'dotenv';
 import { configureMiddlewares } from './routes';
 import { JwtModule } from '@nestjs/jwt';
@@ -44,7 +46,8 @@ console.log('JWT Secret:', process.env.JWT_SECRET);
         Wallet,
         WalletDetailSplit,
         Device,
-        WalletDetails
+        WalletDetails,
+        Category
       ],
       synchronize: false,
       // logging: true,
@@ -57,6 +60,7 @@ console.log('JWT Secret:', process.env.JWT_SECRET);
     UserModule,
     WalletModule,
     WalletDetailModule,
+    CategoryModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'defaultSecret',
       signOptions: { expiresIn: '1y' },
