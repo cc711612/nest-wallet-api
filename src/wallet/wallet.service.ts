@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
@@ -71,5 +71,28 @@ export class WalletService {
 
   remove(id: number) {
     return this.walletRepository.delete(id);
+  }
+
+  async findUsersByWalletCode(code: string) {
+    const wallet = await this.walletRepository.findOne({ where: { code } });
+    if (!wallet) {
+      throw new NotFoundException(`Wallet with code ${code} not found`);
+    }
+
+    const walletUsers = await this.walletUserRepository.find({
+      where: { walletId: wallet.id },
+    });
+
+    return {
+      wallet: {
+        users: walletUsers.map(walletUser => ({
+          id: walletUser.id,
+          name: walletUser.name,
+          userId: walletUser.userId,
+          isAdmin: walletUser.isAdmin,
+          notifyEnable: walletUser.notifyEnable,
+        })),
+      },
+    };
   }
 }
