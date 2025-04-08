@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Details Listener</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Wallet Details Listener</h1>
+    <div id="messages"></div>
+
+    <script>
+        // Connect to the Socket.IO server
+        const socket = io('http://127.0.0.1:3000/wallets', {
+            transports: ['websocket', 'polling'], // 確保使用正確的傳輸方式
+            path: '/socket.io/' // 明確指定 Socket.IO 的路徑
+        }); 
+
+        // Listen for the 'walletDetailAdded' event
+        socket.on('walletDetailAdded', (detail) => {
+            const messagesDiv = document.getElementById('messages');
+            const message = document.createElement('p');
+            message.textContent = `New Wallet Detail Added: ${JSON.stringify(detail)}`;
+            messagesDiv.appendChild(message);
+        });
+
+        // Listen for the 'walletDetailAdded' event
+        socket.on('walletUserIndex', (detail) => {
+            const messagesDiv = document.getElementById('messages');
+            const message = document.createElement('p');
+            console.log(detail);
+            message.textContent = `New Wallet Index: ${JSON.stringify(detail)}`;
+            messagesDiv.appendChild(message);
+        });
+        
+        socket.on('connect', () => {
+            console.log('Connected to the server');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from the server');
+        });
+    </script>
+</body>
+</html>
