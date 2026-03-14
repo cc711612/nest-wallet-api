@@ -1,38 +1,29 @@
-# 使用輕量級的 Node.js 基礎映像進行構建
-FROM node:20-alpine AS builder
-
-# 設置工作目錄
+FROM node:20-alpine AS base
 WORKDIR /usr/src/app
-
-# 複製 package.json 和 package-lock.json
 COPY package*.json ./
 
-# 設置環境變數以安裝生產依賴
-ENV NODE_ENV=production
+FROM base AS dev-deps
+RUN npm ci
 
-# 安裝生產依賴
-RUN npm install --only=production
+FROM base AS prod-deps
+RUN npm ci --omit=dev
 
-# 安裝 nodemon
-RUN npm install -g nodemon
-
-# 複製應用程式代碼
+FROM dev-deps AS build
 COPY . .
+RUN npm run build
 
-# 使用更小的基礎映像來運行應用程式
-FROM node:20-alpine
-
-# 安裝 bash
-RUN apk add --no-cache bash
-
-# 設置工作目錄
+FROM node:20-alpine AS development
 WORKDIR /usr/src/app
-
-# 從 builder 階段複製必要的文件
-COPY --from=builder /usr/src/app /usr/src/app
-
-# 暴露應用程式埠
+COPY --from=dev-deps /usr/src/app/node_modules ./node_modules
+COPY . .
 EXPOSE 3000
+CMD ["npm", "run", "start:dev"]
 
-# 修改 CMD 指令以使用 node 而不是 nodemon 啟動應用程式
+FROM node:20-alpine AS production
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
+COPY --from=prod-deps /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/dist ./dist
+COPY package*.json ./
+EXPOSE 3000
 CMD ["node", "dist/main.js"]

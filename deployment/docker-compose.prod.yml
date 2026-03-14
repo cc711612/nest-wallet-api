@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+      target: production
+    container_name: ${PROJECT_NAME:-nest-wallet-api}-prod
+    env_file:
+      - ../.env
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT:-3000}
+    ports:
+      - "${PORT:-3000}:3000"
+    restart: unless-stopped
