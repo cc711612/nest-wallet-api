@@ -17,6 +17,9 @@ export class Wallet {
   @Column({ length: 3, default: 'TWD' })
   unit: string = 'TWD';
 
+  @Column({ length: 50, default: 'multi' })
+  mode: string = 'multi';
+
   @Column({ length: 50, nullable: true })
   code?: string;
 

@@ -24,6 +24,15 @@ export class UpdateWalletUserDto {
   @IsOptional()
   readonly role?: string;
 
+  @ApiProperty({ description: 'The display name of the wallet user', required: false })
+  @IsString()
+  @IsOptional()
+  readonly name?: string;
+
+  @ApiProperty({ description: 'Whether notify is enabled for this user', required: false })
+  @IsOptional()
+  readonly notifyEnable?: boolean;
+
   @ApiProperty({ description: 'The status of the wallet user', enum: [1, 0], default: 1 })
   @IsEnum([1, 0])
   @IsOptional()

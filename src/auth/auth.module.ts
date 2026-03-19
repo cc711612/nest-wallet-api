@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthController } from './auth.controller';
+import { ConfigModule } from '@nestjs/config';
+import { ApiAuthController } from './api-auth.controller';
+import { ApiSocialController } from './api-social.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { WalletUserModule } from '../wallet/wallet-user.module';
+import { SocialService } from './social.service';
 
 @Module({
   imports: [
@@ -16,8 +18,8 @@ import { WalletUserModule } from '../wallet/wallet-user.module';
     ConfigModule,
     WalletUserModule,
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
+  controllers: [ApiAuthController, ApiSocialController],
+  providers: [AuthService, SocialService],
   exports: [AuthService],
 })
 export class AuthModule {}

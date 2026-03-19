@@ -10,15 +10,24 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const config = new DocumentBuilder()
-    .setTitle('Auth API')
-    .setDescription('The authentication API description')
-    .setVersion('1.0')
-    .addTag('auth')
+    .setTitle('Nest Wallet API')
+    .setDescription('API documentation for nest-wallet-api')
+    .setVersion('1.0.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'bearer',
+    )
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup(process.env.SWAGGER_PATH || 'swagger', app, document);
   const port = process.env.PORT || 3000;
-  await app.listen(port); // 更改端口為 3001
+  await app.listen(port);
 }
 bootstrap();

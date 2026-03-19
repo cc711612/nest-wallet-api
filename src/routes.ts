@@ -13,11 +13,19 @@ export function configureMiddlewares(consumer: MiddlewareConsumer) {
   consumer
     .apply(JwtAuthMiddleware)
     .exclude(
-      { path: 'wallets/:code/users', method: RequestMethod.GET },
-      { path: 'categories', method: RequestMethod.GET },
+      { path: 'api/wallet/auth/login', method: RequestMethod.POST },
+      { path: 'api/wallet/auth/login/token', method: RequestMethod.POST },
+      { path: 'api/wallet/auth/register', method: RequestMethod.POST },
+      { path: 'api/wallet/auth/register/batch', method: RequestMethod.POST },
+      { path: 'api/wallet/user', method: RequestMethod.GET },
+      { path: 'api/wallet/user', method: RequestMethod.POST },
     )
     .forRoutes(
-      { path: 'wallets', method: RequestMethod.ALL },
-      { path: 'wallets/*', method: RequestMethod.ALL },
+      { path: 'api/auth/thirdParty/bind', method: RequestMethod.POST },
+      { path: 'api/auth/thirdParty/unBind', method: RequestMethod.POST },
+      { path: 'api/wallet', method: RequestMethod.ALL },
+      { path: 'api/wallet/*path', method: RequestMethod.ALL },
+      { path: 'api/device', method: RequestMethod.ALL },
+      { path: 'api/device/*path', method: RequestMethod.ALL },
     );
 }

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto, RegisterDto } from './dto';
 import * as bcrypt from 'bcryptjs';
+import { randomBytes } from 'crypto';
 import { UserService } from '../user/user.service';
 import { WalletUserService } from '../wallet/wallet-user.service';
 import { UserTransformer } from './user.transformer';
@@ -49,6 +50,26 @@ export class AuthService {
     return UserTransformer.transform(user);
   }
 
+  async thirdPartyLoginByUserId(userId: number, agent: string, ip: string) {
+    const user = await this.userService.findOne(userId);
+    if (!user) {
+      throw new UnauthorizedException('登入失敗');
+    }
+
+    const memberToken = randomBytes(32).toString('hex');
+    await this.userService.updateAuthMeta(userId, memberToken, agent, ip);
+
+    const userWithWallet = await this.userService.findUserWithWallet(userId);
+    if (!userWithWallet) {
+      throw new UnauthorizedException('登入失敗');
+    }
+
+    userWithWallet.token = memberToken;
+    userWithWallet.jwt = await this.generateToken(userWithWallet);
+    userWithWallet.notifies = await this.walletUserService.getWalletUsers(userId);
+    return UserTransformer.transform(userWithWallet);
+  }
+
   async checkBind(checkBindDto: any) {
     // Implement check bind logic here
     // For example, you might check if a user is bound to a specific service
@@ -82,8 +103,8 @@ export class AuthService {
 
   async decodeToken(token: string) {
     try {
-      const secretKey = this.configService.get<string>('JWT_SECRET');
-      return this.jwtService.verify(token, { secret: secretKey, algorithms: ['HS256'] });
+      const secret = this.configService.get<string>('JWT_SECRET');
+      return this.jwtService.verify(token, { secret, algorithms: ['HS256'] });
     } catch (error) {
       throw new UnauthorizedException('無效的 Token');
     }
@@ -91,7 +112,17 @@ export class AuthService {
 
   async getUserByDecodetoken(token: string) {
     const decoded = await this.decodeToken(token);
-    return this.userService.findOne(decoded.user.id);
+    const userId = Number(decoded?.user?.id);
+    if (Number.isInteger(userId) && userId > 0) {
+      return this.userService.findOne(userId);
+    }
+
+    const account = decoded?.user?.account;
+    if (typeof account === 'string' && account.length > 0) {
+      return this.userService.findByAccount(account);
+    }
+
+    throw new UnauthorizedException('無法解析使用者資訊');
   }
   
   async register(registerDto: RegisterDto) {

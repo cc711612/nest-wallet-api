@@ -79,6 +79,10 @@ export class WalletDetails {
   @JoinColumn({ name: 'wallet_id' })
   wallet!: Wallet;
 
+  @ManyToOne(() => Category)
+  @JoinColumn({ name: 'category_id' })
+  category?: Category;
+
   @ManyToOne(() => WalletUser)
   @JoinColumn({ name: 'payment_wallet_user_id' })
   paymentUser!: WalletUser;

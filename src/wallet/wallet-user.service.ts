@@ -51,10 +51,42 @@ export class WalletUserService {
     return await this.walletUserRepository.save(walletUser);
   }
 
+  async updateCompat(
+    id: number,
+    payload: {
+      name?: string;
+      notifyEnable?: boolean;
+    },
+  ): Promise<WalletUser> {
+    const updateData: Partial<WalletUser> = {};
+    if (payload.name !== undefined) {
+      updateData.name = payload.name;
+    }
+    if (payload.notifyEnable !== undefined) {
+      updateData.notifyEnable = payload.notifyEnable;
+    }
+
+    await this.walletUserRepository.update(id, updateData);
+
+    const updated = await this.walletUserRepository.findOne({ where: { id } });
+    if (!updated) {
+      throw new NotFoundException(`WalletUser with ID ${id} not found`);
+    }
+
+    return updated;
+  }
+
   async softDelete(id: number): Promise<void> {
     const walletUser = await this.findOne(id);
     walletUser.deletedAt = new Date();
     await this.walletUserRepository.save(walletUser);
+  }
+
+  async softDeleteCompat(id: number): Promise<void> {
+    const result = await this.walletUserRepository.update(id, { deletedAt: new Date() });
+    if (!result.affected) {
+      throw new NotFoundException(`WalletUser with ID ${id} not found`);
+    }
   }
 
   async restore(id: number): Promise<WalletUser> {
@@ -65,8 +97,15 @@ export class WalletUserService {
 
   async getWalletUsers(userId?: number, walletUserId?: number): Promise<any[]> {
     const query = this.walletUserRepository.createQueryBuilder('walletUser')
-      .leftJoinAndSelect('walletUser.wallet', 'wallet')
-      .select(['walletUser.id', 'walletUser.name', 'walletUser.walletId', 'walletUser.notifyEnable', 'wallet.id', 'wallet.code']);
+      .leftJoin('walletUser.wallet', 'wallet')
+      .select([
+        'walletUser.id AS wallet_user_id',
+        'walletUser.name AS wallet_user_name',
+        'walletUser.walletId AS wallet_id',
+        'walletUser.notifyEnable AS notify_enable',
+        'wallet.id AS relation_wallet_id',
+        'wallet.code AS relation_wallet_code',
+      ]);
 
     if (userId) {
       query.andWhere('walletUser.userId = :userId', { userId });
@@ -76,14 +115,24 @@ export class WalletUserService {
       query.andWhere('walletUser.id = :walletUserId', { walletUserId });
     }
 
-    const walletUsers = await query.getMany();
+    const walletUsers = await query.getRawMany<{
+      wallet_user_id: number | string;
+      wallet_user_name: string;
+      wallet_id: number | string;
+      notify_enable: boolean | number;
+      relation_wallet_id: number | string | null;
+      relation_wallet_code: string | null;
+    }>();
 
-    return walletUsers.map(walletUser => ({
-      id: walletUser.id,
-      name: walletUser.name,
-      walletId: walletUser.walletId,
-      notifyEnable: walletUser.notifyEnable,
-      wallets: walletUser.wallet,
+    return walletUsers.map((walletUser) => ({
+      id: Number(walletUser.wallet_user_id),
+      name: walletUser.wallet_user_name,
+      walletId: Number(walletUser.wallet_id),
+      notifyEnable: Boolean(walletUser.notify_enable),
+      wallets: {
+        id: Number(walletUser.relation_wallet_id ?? walletUser.wallet_id),
+        code: walletUser.relation_wallet_code,
+      },
     }));
   }
 }

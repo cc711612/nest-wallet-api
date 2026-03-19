@@ -1,0 +1,46 @@
+export function toWalletV2LoginShape(result: Record<string, any>) {
+  return {
+    id: result.id,
+    name: result.name,
+    member_token: result.memberToken,
+    jwt: result.jwt,
+    wallet: result.wallet,
+    walletUsers: (result.walletUsers ?? []).map((walletUser: Record<string, any>) => ({
+      id: walletUser.id,
+      wallet_id: walletUser.walletId,
+      user_id: walletUser.userId,
+      name: walletUser.name,
+      token: walletUser.token,
+      is_admin: walletUser.isAdmin,
+      notify_enable: walletUser.notifyEnable,
+      agent: walletUser.agent ?? '',
+      ip: walletUser.ip ?? '',
+      created_at: walletUser.createdAt,
+      updated_at: walletUser.updatedAt,
+      deleted_at: walletUser.deletedAt,
+    })),
+    devices: (result.devices ?? []).map((device: Record<string, any>) => ({
+      id: device.id,
+      user_id: device.userId,
+      wallet_user_id: device.walletUserId,
+      platform: device.platform,
+      device_name: device.deviceName,
+      device_type: device.deviceType,
+      fcm_token: device.fcmToken,
+      expired_at: device.expiredAt,
+      created_at: device.createdAt,
+      updated_at: device.updatedAt,
+      deleted_at: device.deletedAt,
+    })),
+    notifies: (result.notifies ?? []).map((notify: Record<string, any>) => ({
+      id: notify.id,
+      name: notify.name,
+      wallet_id: notify.walletId,
+      notify_enable: notify.notifyEnable,
+      wallets: {
+        id: notify.wallets?.id ?? notify.walletId ?? null,
+        code: notify.wallets?.code ?? null,
+      },
+    })),
+  };
+}

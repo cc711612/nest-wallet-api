@@ -1,59 +1,34 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, Patch } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto, UpdateCategoryDto } from './dto';
-import { Category } from './entities/category.entity';
+import { wrappedOk } from '../common/swagger/wrapped-response';
 
-@ApiTags('categories')
-@Controller('categories')
+@ApiTags('api-categories')
+@Controller('api/categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-//   @Post()
-//   @ApiOperation({ summary: 'Create a new category' })
-//   @ApiResponse({ status: 201, description: 'Category created successfully', type: Category })
-//   @ApiResponse({ status: 400, description: 'Invalid input data' })
-//   create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
-//     return this.categoryService.create(createCategoryDto);
-//   }
-
   @Get()
-  @ApiOperation({ summary: 'Get all categories' })
-  @ApiResponse({ status: 200, description: 'List of all categories', type: [Category] })
-  findAll(): Promise<Category[]> {
-    return this.categoryService.findAll();
+  @ApiOperation({ summary: '取得分類清單' })
+  @ApiOkResponse(
+    wrappedOk('分類清單', [
+      {
+        id: 1,
+        parent_id: null,
+        wallet_id: null,
+        name: '餐飲',
+        icon: 'food',
+      },
+    ]),
+  )
+  async findAll() {
+    const categories = await this.categoryService.findAll();
+    return categories.map((item) => ({
+      id: item.id,
+      parent_id: item.parentId ?? null,
+      wallet_id: item.walletId ?? null,
+      name: item.name,
+      icon: item.icon ?? null,
+    }));
   }
-
-//   @Get(':id')
-//   @ApiOperation({ summary: 'Get a category by ID' })
-//   @ApiResponse({ status: 200, description: 'Category details', type: Category })
-//   @ApiResponse({ status: 404, description: 'Category not found' })
-//   findOne(@Param('id') id: string): Promise<Category> {
-//     return this.categoryService.findOne(Number(id));
-//   }
-
-//   @Put(':id')
-//   @ApiOperation({ summary: 'Update a category by ID' })
-//   @ApiResponse({ status: 200, description: 'Category updated successfully', type: Category })
-//   @ApiResponse({ status: 404, description: 'Category not found' })
-//   @ApiResponse({ status: 400, description: 'Invalid input data' })
-//   update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-//     return this.categoryService.update(Number(id), updateCategoryDto);
-//   }
-
-//   @Delete(':id')
-//   @ApiOperation({ summary: 'Soft delete a category by ID' })
-//   @ApiResponse({ status: 200, description: 'Category deleted successfully' })
-//   @ApiResponse({ status: 404, description: 'Category not found' })
-//   remove(@Param('id') id: string): Promise<void> {
-//     return this.categoryService.softDelete(Number(id));
-//   }
-
-//   @Patch(':id/restore')
-//   @ApiOperation({ summary: 'Restore a deleted category' })
-//   @ApiResponse({ status: 200, description: 'Category restored successfully', type: Category })
-//   @ApiResponse({ status: 404, description: 'Category not found' })
-//   restore(@Param('id') id: string): Promise<Category> {
-//     return this.categoryService.restore(Number(id));
-//   }
 }

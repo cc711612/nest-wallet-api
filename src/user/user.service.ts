@@ -47,6 +47,14 @@ export class UserService {
     return this.findOne(id);
   }
 
+  async updateAuthMeta(id: number, token: string, agent: string, ip: string): Promise<void> {
+    await this.userRepository.update(id, {
+      token,
+      agent,
+      ip,
+    });
+  }
+
   async remove(id: number): Promise<void> {
     await this.userRepository.delete(id);
   }

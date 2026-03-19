@@ -19,13 +19,25 @@ export class GeneralOutputMiddleware implements NestMiddleware {
         responseBody = body;
       }
 
-      if (responseBody && responseBody.code) {
+      if (responseBody && responseBody.code !== undefined && responseBody.status !== undefined) {
         return originalSend(JSON.stringify(responseBody));
+      }
+
+      if (responseBody && responseBody.statusCode !== undefined && responseBody.message !== undefined) {
+        const formattedErrorResponse = {
+          status: false,
+          code: responseBody.statusCode,
+          message: responseBody.message,
+          data: responseBody.data ?? [],
+        };
+
+        return originalSend(JSON.stringify(formattedErrorResponse));
       }
 
       const formattedResponse = {
         status: true,
         code: res.statusCode,
+        message: '',
         data: responseBody,
       };
 

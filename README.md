@@ -1,63 +1,48 @@
 # Wallet API
 
-This project is a Nest.js application that provides wallet-related functionalities. It allows users to create, retrieve, update, and delete wallets.
+NestJS 錢包 API，使用 `wallet-v2` 相容路由（`/api/*`）。
 
-## Installation
+## 開發啟動（Docker）
 
-To get started with the Wallet API, follow these steps:
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/wallet-api.git
-   ```
-
-2. Navigate to the project directory:
-   ```
-   cd wallet-api
-   ```
-
-3. Install the dependencies:
-   ```
-   npm install
-   ```
-
-## Running the Application
-
-To run the application in development mode, use the following command:
-```
-npm run start:dev
+```bash
+docker compose -f deployment/docker-compose.dev.yml up -d --build
 ```
 
-The application will start on `http://localhost:3000`.
+## 常用指令（Docker）
 
-## API Endpoints
-
-### Wallets
-
-- **Create a Wallet**
-  - `POST /wallet`
-  - Request Body: `CreateWalletDto`
-
-- **Get All Wallets**
-  - `GET /wallet`
-
-- **Get a Wallet by ID**
-  - `GET /wallet/:id`
-
-- **Update a Wallet**
-  - `PUT /wallet/:id`
-  - Request Body: `CreateWalletDto`
-
-- **Delete a Wallet**
-  - `DELETE /wallet/:id`
-
-## Testing
-
-To run the end-to-end tests, use the following command:
-```
-npm run test:e2e
+```bash
+docker compose -f deployment/docker-compose.dev.yml exec app npm run build
+docker compose -f deployment/docker-compose.dev.yml exec app npm run test
+docker compose -f deployment/docker-compose.dev.yml exec app npm run test:e2e
 ```
 
-## License
+## API 文件
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+- Swagger UI：`http://localhost:3000/swagger`
+- OpenAPI JSON：`http://localhost:3000/swagger-json`
+- 對齊報告：`docs/api/wallet-v2-parity-report.md`
+
+## Postman 匯入檔
+
+- Collection：`postman/nest-wallet-api.postman_collection.json`
+
+此 collection 已包含：
+
+- `POST /api/auth/login`
+- `POST /api/auth/thirdParty/checkBind`
+- `POST /api/auth/thirdParty/bind`
+- `POST /api/auth/thirdParty/unBind`
+- `POST /api/wallet/auth/login`
+- `POST /api/wallet/auth/login/token`
+- `POST /api/wallet/auth/register`
+- `POST /api/wallet/auth/register/batch`
+- `GET /api/wallet`
+- `GET|POST /api/wallet/user`
+- `PUT /api/wallet/user/:wallet_users_id`
+- `DELETE /api/wallet/:wallet/user/:wallet_user_id`
+- `GET /api/wallet/:wallet/detail`
+- `GET /api/device`
+- `POST /api/device`
+- `GET /api/option/exchangeRate`
+- `GET /api/option/category`
+- `GET /api/categories`
