@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { WalletUser } from './entities/wallet-user.entity';
 import { CreateWalletUserDto } from './dto/create-wallet-user.dto';
 import { UpdateWalletUserDto } from './dto/update-wallet-user.dto';
@@ -43,6 +43,30 @@ export class WalletUserService {
     });
 
     return walletUser || undefined;
+  }
+
+  async findByTokenAndWallet(token: string, walletId: number): Promise<WalletUser | null> {
+    return this.walletUserRepository.findOne({
+      where: {
+        token,
+        walletId,
+        deletedAt: IsNull(),
+      },
+      relations: ['user', 'wallet'],
+    });
+  }
+
+  async listByUserId(userId: number): Promise<WalletUser[]> {
+    return this.walletUserRepository.find({
+      where: {
+        userId,
+        deletedAt: IsNull(),
+      },
+      order: {
+        id: 'ASC',
+      },
+      relations: ['user', 'wallet'],
+    });
   }
 
   async update(id: number, updateWalletUserDto: UpdateWalletUserDto): Promise<WalletUser> {

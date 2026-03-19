@@ -1,7 +1,8 @@
 import { MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { MemoryLoggerMiddleware } from './middleware/memory-logger.middleware';
-import { JwtAuthMiddleware } from './middleware/jwt-auth.middleware';
 import { GeneralOutputMiddleware } from './middleware/general-output.middleware';
+import { VerifyApiMiddleware } from './middleware/verify-api.middleware';
+import { VerifyWalletMemberApiMiddleware } from './middleware/verify-wallet-member-api.middleware';
 
 export function configureMiddlewares(consumer: MiddlewareConsumer) {
   consumer
@@ -9,10 +10,12 @@ export function configureMiddlewares(consumer: MiddlewareConsumer) {
     .forRoutes(
       { path: '/*', method: RequestMethod.ALL },
     );
-  // for wallet controller
+  // VerifyApi (similar to wallet-v2 VerifyApi)
   consumer
-    .apply(JwtAuthMiddleware)
+    .apply(VerifyApiMiddleware)
     .exclude(
+      { path: 'api/auth/login', method: RequestMethod.POST },
+      { path: 'api/auth/thirdParty/checkBind', method: RequestMethod.POST },
       { path: 'api/wallet/auth/login', method: RequestMethod.POST },
       { path: 'api/wallet/auth/login/token', method: RequestMethod.POST },
       { path: 'api/wallet/auth/register', method: RequestMethod.POST },
@@ -24,8 +27,17 @@ export function configureMiddlewares(consumer: MiddlewareConsumer) {
       { path: 'api/auth/thirdParty/bind', method: RequestMethod.POST },
       { path: 'api/auth/thirdParty/unBind', method: RequestMethod.POST },
       { path: 'api/wallet', method: RequestMethod.ALL },
-      { path: 'api/wallet/*path', method: RequestMethod.ALL },
+    );
+
+  // VerifyWalletMemberApi (similar to wallet-v2 VerifyWalletMemberApi)
+  consumer
+    .apply(VerifyWalletMemberApiMiddleware)
+    .forRoutes(
       { path: 'api/device', method: RequestMethod.ALL },
       { path: 'api/device/*path', method: RequestMethod.ALL },
+      { path: 'api/wallet/user/:wallet_users_id', method: RequestMethod.PUT },
+      { path: 'api/wallet/:wallet/detail', method: RequestMethod.ALL },
+      { path: 'api/wallet/:wallet/detail/*path', method: RequestMethod.ALL },
+      { path: 'api/wallet/:wallet/user/:wallet_user_id', method: RequestMethod.DELETE },
     );
 }

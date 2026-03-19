@@ -22,6 +22,11 @@ docker compose -f deployment/docker-compose.dev.yml exec app npm run test:e2e
 - OpenAPI JSON：`http://localhost:3000/swagger-json`
 - 對齊報告：`docs/api/wallet-v2-parity-report.md`
 
+## Architecture
+
+- 目前以 `service + repository` 為主，並建立 `src/modules/*` 統一模組入口。
+- 模組化遷移規劃請見：`src/modules/README.md`
+
 ## Postman 匯入檔
 
 - Collection：`postman/nest-wallet-api.postman_collection.json`

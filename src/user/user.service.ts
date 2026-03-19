@@ -26,6 +26,10 @@ export class UserService {
     return this.userRepository.findOne({ where: { account } });
   }
 
+  findByToken(token: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { token } });
+  }
+
   create(user: User): Promise<User> {
     return this.userRepository.save(user);
   }
